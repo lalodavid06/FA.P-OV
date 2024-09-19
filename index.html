@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>'???</title>
+    <style>
+        body {
+            background-color: black;
+            text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: none; /* Ocultar el canvas inicialmente */
+            background-color: black;
+        }
+        #passwordPrompt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        input {
+            padding: 10px;
+            font-size: 18px;
+            border-radius: 5px;
+            border: none;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        @media only screen and (max-width: 600px) {
+            canvas {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1 id="greeting" style="display: none;">Feliz día de parte de Davidsito, se te quiere</h1>
+<div id="passwordPrompt">
+    <h2>Ingresa la contraseña</h2> <!-- Mensaje actualizado -->
+    <input type="password" id="password" placeholder="Contraseña">
+    <br>
+    <button onclick="checkPassword()">Entrar</button>
+</div>
+
+<canvas id="girasolCanvas" width="800" height="600"></canvas>
+
+<script>
+    const canvas = document.getElementById('girasolCanvas');
+    const ctx = canvas.getContext('2d');
+    const phi = 137.508 * (Math.PI / 180);
+    let angleOffset = 0;
+
+    function checkPassword() {
+        const password = document.getElementById('password').value;
+        if (password === 'ojos verdes') {
+            document.getElementById('passwordPrompt').style.display = 'none';
+            canvas.style.display = 'block';
+            document.getElementById('greeting').style.display = 'block';
+            animate();
+        } else {
+            alert('Contraseña incorrecta. Inténtalo de nuevo.');
+        }
+    }
+
+    function drawPetal(x, y, radius, angle) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.fillStyle = "yellow";
+        ctx.beginPath();
+        ctx.ellipse(0, 0, radius, radius / 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+
+    function drawStem(x, y) {
+        ctx.fillStyle = "green";
+        ctx.fillRect(x - 5, y, 10, 200);  // Tallo vertical
+    }
+
+    function drawSunflower(centerX, centerY) {
+        // Dibujar los pétalos
+        for (let i = 0; i < 16; i++) {
+            for (let j = 0; j < 18; j++) {
+                let radius = 75 - j * 3;
+                let angle = (Math.PI / 9) * j + angleOffset + i * (Math.PI / 8);
+                drawPetal(centerX, centerY, radius, angle);
+            }
+        }
+
+        // Dibujar el centro marrón
+        ctx.fillStyle = "brown";
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 40, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Dibujar el patrón de espiral en el centro
+        for (let i = 0; i < 160 + 40; i++) {
+            let r = 2.5 * Math.sqrt(i);
+            let theta = i * phi;
+            let x = centerX + r * Math.cos(theta);
+            let y = centerY + r * Math.sin(theta);
+            ctx.fillStyle = i < 160 ? "yellow" : "brown";
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Dibujar el tallo
+        drawStem(centerX, centerY + 40);
+    }
+
+    // Animación de los girasoles
+    function drawFlowers() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const centerX1 = canvas.width / 4;
+        const centerY1 = canvas.height / 3;
+
+        const centerX2 = canvas.width / 2;
+        const centerY2 = canvas.height / 3;
+
+        const centerX3 = (3 * canvas.width) / 4;
+        const centerY3 = canvas.height / 3;
+
+        // Dibujar tres flores
+        drawSunflower(centerX1, centerY1);
+        drawSunflower(centerX2, centerY2);
+        drawSunflower(centerX3, centerY3);
+
+        // Actualizar el ángulo para el movimiento
+        angleOffset += 0.01;
+    }
+
+    function animate() {
+        drawFlowers();
+        requestAnimationFrame(animate);
+    }
+</script>
+
+</body>
+</html>
